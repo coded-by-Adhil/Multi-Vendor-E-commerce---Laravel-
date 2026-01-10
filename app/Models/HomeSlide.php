@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class HomeSlide extends Model
+{
+    use HasFactory;
+
+    protected $table = 'home_slides';
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'title',
+        'short_description',
+        'banner',
+        'video_url',
+    ];
+
+}
