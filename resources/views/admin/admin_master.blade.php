@@ -114,40 +114,54 @@
         });
 
 
-        /** Sidebar Visibility */
+       /** Sidebar Visibility (Hamburger Menu) */
         function VisibilityOfSidebar() {
             const sidebar = document.querySelector(".sidebar");
-
             if (!sidebar) return;
 
             const isOpen = sidebar.classList.contains("sidebar-open");
             const iconsWrapper = document.querySelector(".sidebar-all-icons");
-            const items = document.querySelectorAll('.sidebar > *');
+            
+            // Select only direct span/heading/arrow children to hide, not the whole content
+            const labels = sidebar.querySelectorAll("span, .sidebar-heading, .arrow, hr");
 
             if (isOpen) {
-                sidebar.classList.remove("sidebar-open", "sidebar-open-animation");
+                sidebar.classList.remove("sidebar-open");
                 sidebar.classList.add("sidebar-close");
+                sidebar.style.width = "80px"; // AdminLTE style collapsed width
 
-                items.forEach(el => el.style.display = "none");
-                iconsWrapper.style.display = "flex";
+                labels.forEach(el => el.style.visibility = "hidden");
+                if(iconsWrapper) iconsWrapper.style.display = "flex";
             } else {
                 sidebar.classList.remove("sidebar-close");
-                sidebar.classList.add("sidebar-open", "sidebar-open-animation");
+                sidebar.classList.add("sidebar-open");
+                sidebar.style.width = "250px";
 
-                items.forEach(el => el.style.display = "flex");
-                iconsWrapper.style.display = "none";
+                labels.forEach(el => el.style.visibility = "visible");
+                if(iconsWrapper) iconsWrapper.style.display = "none";
             }
         }
 
 
         /** Sidebar Dropdown */
+       
+
         function toggleSidebarDropdown(trigger) {
+          
             const dropdown = trigger.nextElementSibling;
+          
+            const arrow = trigger.querySelector(".arrow");
 
             if (!dropdown) return;
 
+         
             dropdown.classList.toggle("dropdown");
             dropdown.classList.toggle("dropdown-close");
+
+           
+            if (arrow) {
+                arrow.classList.toggle("dropdown-open-arrow");
+            }
         }
 
 

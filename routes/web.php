@@ -73,9 +73,10 @@ Route::controller(AboutPageController::class)->group(function () {
     Route::get('/about/page', 'AboutPageContent')->name('about.page');
     Route::post('/about-page/update', 'update')->name('about-page.update');
     Route::get('/about', 'HomeAbout')->name('home.about');
+    Route::get('/about-multiple-image-upload-Interface', 'MultimageUploadView')->name('about.multi_image_view');
+    Route::post('/admin/about/upload', 'store')->name('about.upload');
 
 });
-
 
 
 

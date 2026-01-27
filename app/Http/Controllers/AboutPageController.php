@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\About;
 use App\Models\User;
+use App\Models\MultiImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Str;
+
 
 class AboutPageController extends Controller
 {
@@ -93,4 +96,64 @@ class AboutPageController extends Controller
         return view('frontend.about_page_files.about_page',compact('aboutpage'));
 
     }
+
+    public function MultimageUploadView(){
+
+        $id         = Auth::user()->id;
+        $adminData  = User::find($id);    
+        $title = "About Multiple Image Upload";
+        $content_id = 1;
+        $About_page_Content = About::find($content_id);
+
+        return view('admin.multi_image_upload_interface',compact('About_page_Content', 'title', 'adminData'));    
+
+    }
+
+     public function store(Request $request){
+
+        $validator = Validator::make($request->all(), [
+                'file' => 'required',
+                'file.*' => [
+                    'image',
+                    'mimes:jpg,jpeg,png,webp,gif',
+                    'max:10240'
+                ],
+            ], [
+                'file.*.max' => 'One or more images exceed 10MB.',
+                'file.*.image' => 'Only image files are allowed.',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => $validator->errors()->first()
+                ], 422);
+            }
+
+    
+            foreach ($request->file('file') as $file) {
+
+                $filename = 'skills-' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                 $image = Image::read($file)
+                ->resize(220, 220); 
+
+                Storage::disk('public')->put(
+                'SkillsImage/' . $filename,
+                (string) $image->toWebp(80) 
+                );
+                
+                MultiImage::create([
+                    'image_url' => 'SkillsImage/' . $filename,
+                ]);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Images uploaded successfully!'
+            ]);
+        }
 }
+
+
+
