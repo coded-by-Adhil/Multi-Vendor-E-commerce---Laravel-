@@ -35,6 +35,7 @@
             <li class="sidebar_menu_list"><a href="{{ route('about.page') }}"><i class="bi bi-dash-lg sidebar-icon"></i>
 &nbsp;About Page</a></li>
              <li class="sidebar_menu_list"><a href="{{ route('about.multi_image_view') }}"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;Multi Image Upload</a></li>
+             <li class="sidebar_menu_list"><a href="{{ route('about.uploaded_multi_images') }}"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;Multi Images</a></li>
         </ul>
 
         <span class="sidebar-heading">PAGES</span><hr class="sidebar-hr">

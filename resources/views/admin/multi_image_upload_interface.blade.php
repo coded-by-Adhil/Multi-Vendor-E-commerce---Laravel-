@@ -79,7 +79,7 @@
                     dz.removeAllFiles(true);
                 });
 
-                // ❌ Reject large files immediately
+            
                 dz.on("addedfile", function (file) {
                     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
                         showToast('error', 'Image exceeds 10MB and was removed.');

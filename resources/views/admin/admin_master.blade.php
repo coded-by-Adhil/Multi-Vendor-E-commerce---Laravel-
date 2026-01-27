@@ -239,6 +239,29 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
+
+        $(document).ready(function() {
+            $('#imageTable').DataTable({
+                responsive: true,
+                order: [[1, 'desc']], // Default sort by Created At (descending)
+                columnDefs: [
+                    { orderable: false, targets: [0, 3] } // Disable sorting on Image and Actions columns
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search images..."
+                }
+            });
+        });
+
+        function confirmDelete() {
+            if(confirm("Are you sure you want to delete this image? This action cannot be undone.")) {
+                alert("Image deleted successfully.");
+
+            }
+        }
+    </script>
     </script>
 
 </body>

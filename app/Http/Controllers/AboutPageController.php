@@ -109,50 +109,113 @@ class AboutPageController extends Controller
 
     }
 
-     public function store(Request $request){
+     public function store(Request $request)
+     {
 
-        $validator = Validator::make($request->all(), [
-                'file' => 'required',
-                'file.*' => [
-                    'image',
-                    'mimes:jpg,jpeg,png,webp,gif',
-                    'max:10240'
-                ],
-            ], [
-                'file.*.max' => 'One or more images exceed 10MB.',
-                'file.*.image' => 'Only image files are allowed.',
-            ]);
+            $validator = Validator::make($request->all(), [
+            'file' => 'required',
+            'file.*' => 'image|mimes:jpg,jpeg,png,webp,gif|max:10240',
+        ], [
+            'file.*.max' => 'One or more images exceed 10MB.',
+            'file.*.image' => 'Only image files are allowed.',
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status'  => 'error',
-                    'message' => $validator->errors()->first()
-                ], 422);
-            }
-
-    
-            foreach ($request->file('file') as $file) {
-
-                $filename = 'skills-' . uniqid() . '.' . $file->getClientOriginalExtension();
-                
-                 $image = Image::read($file)
-                ->resize(220, 220); 
-
-                Storage::disk('public')->put(
-                'SkillsImage/' . $filename,
-                (string) $image->toWebp(80) 
-                );
-                
-                MultiImage::create([
-                    'image_url' => 'SkillsImage/' . $filename,
-                ]);
-            }
-
+        if ($validator->fails()) {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Images uploaded successfully!'
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        foreach ($request->file('file') as $file) {
+
+            $filename = 'skills-' . uniqid() . '.webp';
+
+            $image = Image::read($file)
+                ->resize(220, 220);
+
+            $path = 'skillsimage/' . $filename;
+
+            Storage::disk('public')->put(
+                $path,
+                (string) $image->toWebp(80)
+            );
+
+            MultiImage::create([
+                'image_url' => $path,
             ]);
         }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Images uploaded successfully!'
+        ]);
+}
+
+
+     public function ShowUploadedImages(){
+
+        $id         = Auth::user()->id;
+        $adminData  = User::find($id);    
+        $title = "Uploaded Images";
+        $content_id = 1;
+        $images = MultiImage::all();
+
+        return view('admin.show_uploaded_images',compact('images', 'title', 'adminData'));    
+
+     }
+
+    public function DeleteImage($id)
+    {
+
+        $image = MultiImage::findOrFail($id);
+        
+        if ($image->image_url && Storage::disk('public')->exists($image->image_url)) {
+            Storage::disk('public')->delete($image->image_url);
+        }
+
+        $image->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Image deleted successfully'
+        ]);
+
+    }
+
+
+       public function UpdateImage(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240'
+        ]);
+
+        $image = MultiImage::findOrFail($id);
+
+        // Remove old image
+        if ($image->image_path && Storage::disk('public')->exists($image->image_path)) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+
+        // Store new image
+        $file = $request->file('image');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('gallery_images', $filename, 'public');
+
+        // Update DB
+        $image->update([
+            'image_path' => $path,
+            'updated_at' => Carbon::now()
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Image updated successfully',
+            'image'  => asset('storage/' . $path)
+        ]);
+    }
+    
+
 }
 
 
