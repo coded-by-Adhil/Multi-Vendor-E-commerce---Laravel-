@@ -44,9 +44,16 @@
                                     <small class="text-muted">{{ $image->updated_at->format('h:i A') }}</small>
                                 </td>
                                 <td>
-                                    <button class="it-btn-action it-btn-edit" title="Edit">
+                                    <button
+                                        class="it-btn-action it-btn-edit"
+                                        data-id="{{ $image->id }}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editImageModal"
+                                        onclick="openEditModal({{ $image->id }})"
+                                    >
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
+
                                     <button
                                         class="it-btn-action it-btn-delete"
                                         data-delete-url="{{ route('about.image.delete', $image->id) }}"
@@ -71,6 +78,42 @@
     </div>
 
 
+    <div class="modal fade" id="editImageModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form id="editImageForm" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" id="editImageId">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Image</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input
+                            type="file"
+                            name="image"
+                            class="form-control"
+                            accept="image/*"
+                            required
+                        >
+                        <small class="text-muted">
+                            JPG, PNG, WEBP, GIF — Max 10MB
+                        </small>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit">
+                            Update Image
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <script>
 
     function confirmDelete(button) {
@@ -88,6 +131,39 @@
             }
         });
     }
+
+
+    function openEditModal(id) {
+            document.getElementById('editImageId').value = id;
+        }
+
+        document.getElementById('editImageForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('editImageId').value;
+            const formData = new FormData(this);
+            const deleteImageBaseUrl = "{{ url('/admin/about/image/update') }}";
+            
+
+            fetch(`${deleteImageBaseUrl}/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload(); // simplest + reliable
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(() => alert('Update failed'));
+        });
+
 
 
 

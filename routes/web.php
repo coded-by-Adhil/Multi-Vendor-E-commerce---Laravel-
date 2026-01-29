@@ -80,6 +80,8 @@ Route::controller(AboutPageController::class)->group(function () {
     Route::get('/admin/about/image/delete/{id}', 'DeleteImage')
     ->name('about.image.delete');
 
+    Route::post('/admin/about/image/update/{id}', 'UpdateImage')
+    ->name('about.image.update');
 
 });
 
