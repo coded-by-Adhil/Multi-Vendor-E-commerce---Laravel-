@@ -93,6 +93,10 @@
     <!-- Summernote JS -->
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
 
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <!-- NOW your custom scripts can use jQuery ($) -->
     <script>
         /** Profile Dropdown Logic */
@@ -255,12 +259,8 @@
             });
         });
 
-        function confirmDelete() {
-            if(confirm("Are you sure you want to delete this image? This action cannot be undone.")) {
-                alert("Image deleted successfully.");
 
-            }
-        }
+
     </script>
     </script>
 

@@ -76,14 +76,16 @@ Route::controller(AboutPageController::class)->group(function () {
     Route::get('/about-multiple-image-upload-Interface', 'MultimageUploadView')->name('about.multi_image_view');
     Route::post('/admin/about/upload', 'store')->name('about.upload');
     Route::get('/show-about-multiple-images', 'ShowUploadedImages')->name('about.uploaded_multi_images');
-    Route::delete('/admin/about/{id}', 'DeleteImage')->name('about.image.delete');
-    Route::post('/admin/about/{id}', 'UpdateImage')->name('about.image.update');
+
+    Route::get('/admin/about/image/delete/{id}', 'DeleteImage')
+    ->name('about.image.delete');
+
 
 });
 
 
-Route::post('/admin/gallery/{id}', [GalleryController::class, 'update'])
-    ->name('gallery.update');
+// Route::post('/admin/gallery/{id}', [GalleryController::class, 'update'])
+//     ->name('gallery.update');
 
 
 

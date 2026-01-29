@@ -47,9 +47,16 @@
                                     <button class="it-btn-action it-btn-edit" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="it-btn-action it-btn-delete" title="Delete" onclick="confirmDelete({{ $image->id }})">
+                                    <button
+                                        class="it-btn-action it-btn-delete"
+                                        data-delete-url="{{ route('about.image.delete', $image->id) }}"
+                                        onclick="confirmDelete(this)"
+                                        title="Delete">
                                         <i class="bi bi-trash"></i>
                                     </button>
+
+
+
                                 </td>
                             </tr>
                          
@@ -66,25 +73,22 @@
 
     <script>
 
-        function confirmDelete(id) {
-            if (!confirm('Are you sure you want to delete this image?')) return;
+    function confirmDelete(button) {
 
-            fetch(`/admin/about/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                showToast(data.status, data.message);
-                if (data.status === 'success') {
-                    document.getElementById(`image-${id}`).remove();
-                }
-            })
-            .catch(() => showToast('error', 'Delete failed'));
-        }
+        const deleteUrl = button.dataset.deleteUrl;
+
+        Swal.fire({
+            title: "Are you sure you want to delete this image?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
+        });
+    }
+
 
 
     </script>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 
 class AboutPageController extends Controller
@@ -165,23 +166,19 @@ class AboutPageController extends Controller
 
      }
 
-    public function DeleteImage($id)
-    {
-
-        $image = MultiImage::findOrFail($id);
+     public function DeleteImage($id){
         
+        $image = MultiImage::findOrFail($id);
+
         if ($image->image_url && Storage::disk('public')->exists($image->image_url)) {
             Storage::disk('public')->delete($image->image_url);
         }
 
         $image->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Image deleted successfully'
-        ]);
-
+        return redirect()->back()->with('success', 'Image deleted successfully');
     }
+
 
 
        public function UpdateImage(Request $request, $id)
