@@ -22,6 +22,11 @@
                 </div>
                 <div class="breadcrumb__wrap__icon">
                     <ul>
+
+                    
+
+
+
                         <li><img src="{{ asset('frontend/assets/img/icons/breadcrumb_icon01.png') }}" alt=""></li>
                         <li><img src="{{ asset('frontend/assets/img/icons/breadcrumb_icon02.png') }}" alt=""></li>
                         <li><img src="{{ asset('frontend/assets/img/icons/breadcrumb_icon03.png') }}" alt=""></li>
@@ -34,7 +39,7 @@
             <!-- breadcrumb-area-end -->
 
             <!-- about-area -->
-<section class="about about__style__two">
+<section class="about about__style__two"> 
 <div class="container">
 <div class="row align-items-center">
 <div class="col-lg-6">
