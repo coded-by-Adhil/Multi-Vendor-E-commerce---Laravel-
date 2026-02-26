@@ -38,6 +38,16 @@
              <li class="sidebar_menu_list"><a href="{{ route('about.uploaded_multi_images') }}"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;Multi Images</a></li>
         </ul>
 
+        <ul class="side-bar-link sidebar_menu" onclick="toggleSidebarDropdown(this)">
+            <span><i class="bi bi-columns sidebar-icon"></i>&nbsp;&nbsp;<span>Portfolio page setup</span></span>
+            <i class="bi bi-caret-down circle-arrow arrow"></i>
+        </ul>
+        <ul class="sub_menu dropdown-close">
+            <li class="sidebar_menu_list"><a href="{{ route('all.portfolio') }}"><i class="bi bi-dash-lg sidebar-icon"></i>
+&nbsp;All Portfolio</a></li>
+             <li class="sidebar_menu_list"><a href="{{ route('add.portfolio') }}"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;Add Portfolio</a></li>
+        </ul>
+
         <span class="sidebar-heading">PAGES</span><hr class="sidebar-hr">
 
         <ul class="side-bar-link sidebar_menu" onclick="toggleSidebarDropdown(this)">
@@ -52,18 +62,25 @@
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;Lock Screen</li>
         </ul>
 
+        
+
         <ul class="side-bar-link sidebar_menu" onclick="toggleSidebarDropdown(this)">
-            <span><i class="bi bi-receipt-cutoff sidebar-icon"></i>&nbsp;&nbsp;<span>Utility</span></span>
+            <span><i class="bi bi-receipt-cutoff sidebar-icon"></i>&nbsp;&nbsp;<span>Blogs</span></span>
             <i class="bi bi-caret-down circle-arrow arrow"></i>
         </ul>
 
         <ul class="sub_menu dropdown-close">
+
+            <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;<a href="{{ route('Add.Blog.Category') }}">Add Blog Category</a></li>
+
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>
 &nbsp;Option6</li>
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>
 &nbsp;Option2</li>
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>
 &nbsp;Option3</li>
+
+
         </ul>
 
     </aside>
