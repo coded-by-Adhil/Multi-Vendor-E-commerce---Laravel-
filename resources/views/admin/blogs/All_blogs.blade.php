@@ -74,25 +74,23 @@
                                     <small class="text-muted">{{ $blog->updated_at->format('h:i A') }}</small>
                                 </td>
                                 <td>
-
-                                   <button
-                                    class="it-btn-action it-btn-delete"
-                                    data-delete-url="{{ route('blogs.delete', $blog->id) }}"
-                                    onclick="confirmDelete(this)"
-                                    title="Delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
+                                 <div style="display:flex;">
                                     <button
-                                    class="it-btn-action it-btn-delete"
-                                    data-delete-url="{{ route('blogs.edit', $blog->id) }}"
-                                    onclick="confirmEdit(this)"
-                                    title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
+                                        class="it-btn-action it-btn-delete"
+                                        data-delete-url="{{ route('blogs.delete', $blog->id) }}"
+                                        onclick="confirmDelete(this)"
+                                        title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
 
+                                        <button
+                                            class="it-btn-action it-btn-edit"
+                                            data-edit-url="{{ route('blogs.edit', $blog->id) }}"
+                                            onclick="openEditModal(this)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
 
-
+                                  </div>
                                 </td>
                             </tr>
                          
@@ -119,11 +117,6 @@
                 </div>
 
              <div class="modal-body">
-
-
-
-
-
 
             <!-- Form -->
             <form id="abForm" action="{{ route('blogs.store') }}" method="POST" enctype="multipart/form-data">
@@ -244,6 +237,101 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editBlogModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+
+        <form id="editForm" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Blog</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="ab-grid">
+
+                        <!-- Title -->
+                        <div class="ab-form-group" style="grid-column: span 2;">
+                            <label class="ab-label">
+                                <i class="bi bi-type-h1"></i> Title
+                            </label>
+                            <input type="text" id="edit_title" name="title" class="ab-input">
+                        </div>
+
+                        <!-- Category -->
+                        <div class="ab-form-group" style="grid-column: span 2;">
+                            <select class="form-select" id="edit_category" name="blog_category_id">
+                                @foreach ($blog_categorys as $id => $blog_category)
+                                    <option value="{{ $id }}">{{ $blog_category }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- TAGS (same design) -->
+                       <div class="ab-form-group" style="grid-column: span 2;">
+                            <label class="form-label fw-bold">Tags</label>
+
+                            <div class="tag-wrapper" style="width:100%;">
+
+                                <div class="tag-input-box" id="editTagBox" style="width:100%; min-height:50px;">
+                                    <input type="text"
+                                        id="editTagInput"
+                                        style="width:100%;"
+                                        placeholder="Type a tag...">
+                                </div>
+
+                                <div class="tag-dropdown" id="editTagDropdown"></div>
+
+                                <input type="hidden" name="tags" id="edit_hidden_tags">
+
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="ab-form-group" style="grid-column: span 2;">
+                            <label class="ab-label">
+                                <i class="bi bi-file-richtext"></i> Description
+                            </label>
+                            <textarea id="edit_summernote" name="description"></textarea>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="ab-form-group" style="grid-column: span 2;">
+                            <label class="ab-label">
+                                <i class="bi bi-image"></i> Image
+                            </label>
+                            <input type="file" name="image" onchange="previewEditImage(this)">
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="ab-preview-area">
+                            <div>
+                                <div class="ab-preview-label">Current Image</div>
+                            </div>
+
+                            <div class="ab-img-container">
+                                <img id="edit_preview" class="ab-preview-img">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit">Update Blog</button>
+                </div>
+            </div>
+        </form>
+
     </div>
 </div>
 
@@ -511,6 +599,164 @@ function confirmDelete(button) {
 
             });
         });
+
+
+
+    function openEditModal(btn) {
+
+        const url = btn.getAttribute('data-edit-url');
+
+        fetch(url)
+        .then(res => res.json())
+        .then(data => {
+
+            const modal = new bootstrap.Modal(document.getElementById('editBlogModal'));
+            modal.show();
+
+            document.getElementById('editForm').action = `/blogs/${data.id}`;
+
+            document.getElementById('edit_title').value = data.title;
+            document.getElementById('edit_category').value = data.blog_category_id;
+
+            // IMAGE FIX 🔥
+           document.getElementById('edit_preview').src =
+                data.image ? "{{ asset('storage/') }}/" + data.image : '';
+
+            // SUMMERNOTE FIX 🔥
+            $('#edit_summernote').summernote('code', data.description || '');
+
+            // TAG FIX 🔥
+            editSelectedTags = Array.isArray(data.tags)
+                ? data.tags
+                : JSON.parse(data.tags || '[]');
+            renderEditTags();
+            showEditSuggestions('');
+
+            
+        });
+    }
+
+        function previewEditImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById('edit_preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function initEditTags(tags) {
+
+            let selected = tags ? tags.split(',') : [];
+
+            const hidden = document.getElementById('edit_hidden_tags');
+            hidden.value = selected.join(',');
+
+        }
+
+        const availableTags = @json($Tags->pluck('name'));
+
+        let editSelectedTags = [];
+
+        const editInput = document.getElementById('editTagInput');
+        const editDropdown = document.getElementById('editTagDropdown');
+        const editHidden = document.getElementById('edit_hidden_tags');
+        const editBox = document.getElementById('editTagBox');
+
+        // Focus
+        editInput.addEventListener('focus', () => {
+            showEditSuggestions('');
+            editDropdown.classList.add('show');
+        });
+
+        // Typing
+        editInput.addEventListener('input', function () {
+            showEditSuggestions(this.value.trim().toLowerCase());
+        });
+
+        // Add tag
+        editInput.addEventListener('keydown', function (e) {
+            const value = this.value.trim();
+
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                if (value) {
+                    addEditTag(value);
+                }
+            }
+        });
+
+        // Add tag
+        function addEditTag(tag) {
+
+            if (!editSelectedTags.includes(tag)) {
+                editSelectedTags.push(tag);
+                renderEditTags();
+            }
+
+            editInput.value = '';
+            showEditSuggestions('');
+        }
+
+        // Remove tag
+        function removeEditTag(tag) {
+            editSelectedTags = editSelectedTags.filter(t => t !== tag);
+            renderEditTags();
+        }
+
+        // Render tags inside input box
+        function renderEditTags() {
+
+            editBox.querySelectorAll('.tag-pill').forEach(e => e.remove());
+
+            editSelectedTags.forEach(tag => {
+
+                const pill = document.createElement('div');
+                pill.className = 'tag-pill';
+                pill.innerHTML = tag;
+
+                const remove = document.createElement('i');
+                remove.className = 'bi bi-x';
+                remove.addEventListener('click', () => removeEditTag(tag));
+
+                pill.appendChild(remove);
+
+                editBox.insertBefore(pill, editInput);
+            });
+
+            editHidden.value = editSelectedTags.join(',');
+        }
+
+        // Suggestions (remove selected ones)
+        function showEditSuggestions(query = '') {
+
+            editDropdown.innerHTML = '';
+
+            let filtered = availableTags.filter(tag => 
+                !editSelectedTags.includes(tag)
+            );
+
+            filtered.forEach(tag => {
+
+                if (query && !tag.toLowerCase().includes(query)) return;
+
+                const div = document.createElement('div');
+                div.className = 'tag-dropdown-item';
+                div.innerText = tag;
+
+                div.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    addEditTag(tag);
+                });
+
+                editDropdown.appendChild(div);
+            });
+
+            editDropdown.classList.add('show');
+        }
+
+        
 
 </script>
 
