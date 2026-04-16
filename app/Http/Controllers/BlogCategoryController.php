@@ -19,7 +19,7 @@ class BlogCategoryController extends Controller
         $adminData  = User::find($id);    
         $title = "Blog Category Page";
         $blog_categorys  = BlogCategory::latest()->get();
-        return view('admin.blog.blog_lists',compact('blog_categorys','title', 'adminData'));
+        return view('admin.blogs.blog_category_lists',compact('blog_categorys','title', 'adminData'));
 
     }
 

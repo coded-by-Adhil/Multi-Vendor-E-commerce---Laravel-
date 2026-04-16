@@ -24,7 +24,6 @@ class AboutPageController extends Controller
         $title = "About Page";
         $content_id = 1;
         $About_page_Content = About::find($content_id);
-
         return view('admin.about_page.about_page',compact('About_page_Content', 'title', 'adminData'));
 
 

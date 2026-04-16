@@ -13,7 +13,6 @@ use Illuminate\Support\Str;
 
 class PortfolioController extends Controller
 {
-    //
 
     public function AllPortfolio(){
 

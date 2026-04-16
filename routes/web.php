@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeSlideController;
 use App\Http\Controllers\AboutPageController;
 use App\Http\Controllers\Home\PortfolioController;
 use App\Http\Controllers\BlogCategoryController;
+use App\Http\Controllers\BlogController;
 
 
 
@@ -141,11 +142,28 @@ Route::middleware(['auth'])
 });
 
 
+Route::middleware(['auth'])
+    ->controller(BlogController::class)
+    ->group(function () {
+
+        Route::get('/blog/lists', 'BlogLists')
+            ->name('Blog.Lists');
+
+
+        Route::get('/blogs', 'index')->name('blogs.index');
+
+        Route::post('/blogs/store', 'store')->name('blogs.store');
+
+        Route::get('/blogs/edit/{id}', 'edit')->name('blogs.edit');
+
+        Route::post('/blogs/update/{id}', 'update')->name('blogs.update');
+
+        Route::post('/blogs/delete/{id}', 'destroy')->name('blogs.delete');
+        
+});
+
 Route::get('/portfolio/details/{id}', [PortfolioController::class, 'PortfolioDetails'])
     ->name('portfolio.details');
-
-
-
 
 
 Route::middleware('auth')->group(function () {

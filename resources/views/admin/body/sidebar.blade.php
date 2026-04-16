@@ -74,7 +74,7 @@
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>&nbsp;<a href="{{ route('Add.Blog.Category') }}">Add Blog Category</a></li>
 
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>
-&nbsp;Option6</li>
+&nbsp;<a href="{{ route('Blog.Lists') }}">All Blogs</a></li>
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>
 &nbsp;Option2</li>
             <li class="sidebar_menu_list"><i class="bi bi-dash-lg sidebar-icon"></i>
